@@ -177,7 +177,8 @@ export default function AdminPage() {
   }
 
   // 3. Render Admin Dashboard if authenticated
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const totalVisits = visits.length;
   const todayVisits = visits.filter((v) => {
     const vDate = v.visit_date ? String(v.visit_date).slice(0, 10) : '';
@@ -242,7 +243,8 @@ export default function AdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     
-    const todayFilename = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const todayFilename = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     link.href = url;
     link.setAttribute('download', `Daftar_Pengunjung_Kampoeng_Radja_${todayFilename}.csv`);
     document.body.appendChild(link);

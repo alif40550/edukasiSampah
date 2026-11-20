@@ -10,7 +10,9 @@ export default function AttendanceModal({ onCompleted }) {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  // Format YYYY-MM-DD menggunakan waktu lokal browser user
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   useEffect(() => {
     // Check local storage for today's attendance
