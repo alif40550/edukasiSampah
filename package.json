@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "package:deploy": "next build && mkdir -p deploy-package && cp -r .next/standalone/* deploy-package/ && cp -r public deploy-package/public && cp -r .next/static deploy-package/.next/static && cp .env.example deploy-package/.env.production && echo 'Paket siap di folder deploy-package!'"
   },
   "dependencies": {
     "next": "^14.2.15",

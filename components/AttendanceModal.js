@@ -43,10 +43,11 @@ export default function AttendanceModal({ onCompleted }) {
         });
         const googleBtnDiv = document.getElementById('googleSignInDiv');
         if (googleBtnDiv) {
+          const btnWidth = Math.min(380, Math.max(220, window.innerWidth - 64));
           window.google.accounts.id.renderButton(googleBtnDiv, {
             theme: 'outline',
             size: 'large',
-            width: 380,
+            width: btnWidth,
             text: 'signin_with',
             shape: 'rectangular',
           });
@@ -150,10 +151,10 @@ export default function AttendanceModal({ onCompleted }) {
     <div className="attendance-overlay">
       <div className="attendance-card">
         <div className="attendance-header">
-          <span class="badge-pill">Daftar Hadir Pengunjung</span>
+          <span className="badge-pill">Daftar Hadir Pengunjung</span>
           <h2>Selamat Datang!</h2>
           <p>
-            Mohon isi daftar hadir kunjungan harian Anda sebelum mengakses modul edukasi pengelolaan sampah Kampoeng Radja Jambi.
+            Mohon isi daftar hadir kunjungan Anda sebelum mengakses modul edukasi pengelolaan sampah Kampoeng Radja Jambi.
           </p>
         </div>
 

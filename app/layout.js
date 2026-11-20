@@ -5,6 +5,12 @@ export const metadata = {
   description: 'Dashboard edukasi pengelolaan sampah berbasis digital mobile berkolaborasi dengan Kampoeng Radja Jambi. Akses video edukasi, buku saku digital, dan kalkulator dampak lingkungan.',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="id">
