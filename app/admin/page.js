@@ -371,6 +371,7 @@ export default function AdminPage() {
                     <th>Asal / Instansi</th>
                     <th>Metode Masuk</th>
                     <th>Tanggal Kunjungan</th>
+                    <th>Waktu Akses</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -419,6 +420,7 @@ export default function AdminPage() {
                         <td>
                           <span style={{ fontWeight: 600, color: "var(--color-dark)" }}>{formatDisplayDate(item.visit_date)}</span>
                         </td>
+                        <td style={{ fontSize: "0.85rem", color: "var(--color-gray-600)" }}>{formatDisplayTime(item.created_at)}</td>
                       </tr>
                     ))
                   )}
