@@ -7,6 +7,7 @@ export default function AttendanceModal({ onCompleted }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [institution, setInstitution] = useState('');
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -99,12 +100,48 @@ export default function AttendanceModal({ onCompleted }) {
     });
   };
 
+  // Fungsi sensor inisial: mengambil huruf pertama tiap kata, sisanya diganti bintang (*)
+  // Contoh: "Heri Haryanto" -> "H*** H******"
+  const maskName = (fullName) => {
+    return fullName
+      .trim()
+      .split(/\s+/)
+      .map((word) => {
+        if (!word) return '';
+        const firstLetter = word.charAt(0).toUpperCase();
+        const maskedRest = word.length > 1 ? '*'.repeat(word.length - 1) : '';
+        return firstLetter + maskedRest;
+      })
+      .join(' ');
+  };
+
   const handleManualSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) {
-      setErrorMessage('Nama dan email wajib diisi!');
+    if (!name.trim()) {
+      setErrorMessage('Nama lengkap wajib diisi!');
       return;
     }
+
+    if (isAnonymous) {
+      // Pengguna Anonim: hanya merekam inisial nama disamarkan, tanggal & waktu akses
+      const masked = maskName(name);
+      const anonId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      await submitAttendance({
+        name: masked,
+        email: `anon_${anonId}@anonymous.local`,
+        institution: '-',
+        avatar_url: '',
+        auth_provider: 'manual',
+        is_anonymous: true,
+      });
+      return;
+    }
+
+    if (!email.trim()) {
+      setErrorMessage('Alamat email wajib diisi!');
+      return;
+    }
+
     await submitAttendance({
       name: name.trim(),
       email: email.trim(),
@@ -214,30 +251,71 @@ export default function AttendanceModal({ onCompleted }) {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="attEmail">Alamat Email *</label>
-            <input
-              id="attEmail"
-              type="email"
-              className="form-input"
-              placeholder="budi@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <div
+            style={{
+              marginBottom: '1rem',
+              padding: '0.75rem',
+              background: isAnonymous ? '#ecfdf5' : '#f8fafc',
+              border: isAnonymous ? '1px solid #a7f3d0' : '1px solid #e2e8f0',
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                color: isAnonymous ? '#065f46' : 'var(--color-dark)',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={isAnonymous}
+                onChange={(e) => setIsAnonymous(e.target.checked)}
+                style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-primary)' }}
+              />
+              <span>Masuk sebagai Pengguna Anonim</span>
+            </label>
+            {isAnonymous && (
+              <p style={{ margin: '0.35rem 0 0 1.6rem', fontSize: '0.78rem', color: '#047857', lineHeight: 1.4 }}>
+                Nama Anda akan disamarkan menjadi inisial (contoh:{' '}
+                <strong>{name.trim() ? maskName(name) : 'H*** H******'}</strong>) dan hanya mencatat tanggal serta waktu kunjungan saja.
+              </p>
+            )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="attInst">Asal / Instansi / Sekolah (Opsional)</label>
-            <input
-              id="attInst"
-              type="text"
-              className="form-input"
-              placeholder="Contoh: SMPN 1 Jambi / Umum"
-              value={institution}
-              onChange={(e) => setInstitution(e.target.value)}
-            />
-          </div>
+          {!isAnonymous && (
+            <>
+              <div className="form-group">
+                <label htmlFor="attEmail">Alamat Email *</label>
+                <input
+                  id="attEmail"
+                  type="email"
+                  className="form-input"
+                  placeholder="budi@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required={!isAnonymous}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="attInst">Asal / Instansi / Sekolah (Opsional)</label>
+                <input
+                  id="attInst"
+                  type="text"
+                  className="form-input"
+                  placeholder="Contoh: SMPN 1 Jambi / Umum"
+                  value={institution}
+                  onChange={(e) => setInstitution(e.target.value)}
+                />
+              </div>
+            </>
+          )}
 
           <button
             type="submit"
@@ -245,7 +323,7 @@ export default function AttendanceModal({ onCompleted }) {
             disabled={loading}
             style={{ marginTop: '1.25rem' }}
           >
-            {loading ? 'Menyimpan...' : 'Kirim Daftar Hadir & Lanjut'}
+            {loading ? 'Menyimpan...' : isAnonymous ? 'Masuk Anonim & Lanjut' : 'Kirim Daftar Hadir & Lanjut'}
           </button>
         </form>
       </div>
